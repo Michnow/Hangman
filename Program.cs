@@ -15,18 +15,19 @@ namespace Hangman
         static char[] wordInvisible = InvisibilityWord(word).ToCharArray();
         static int score = 0;
         static int hangmanLife = 5;
+        static bool cond = false;
+        static string input = String.Empty;
         static void Main(string[] args)
         {
-
-            Console.WriteLine(wordInvisible);
-            Console.WriteLine(word);
             do
             {
-                InGameIfCheck(Console.ReadLine());
-            } while (hangmanLife>0);
+                MainMenu();
+            } while (true);
+            
 
             Console.WriteLine(wordInvisible);
             Console.WriteLine(word);
+            
         }
         
 
@@ -44,37 +45,41 @@ namespace Hangman
             }
             return x;
         } // podmienianie słowa na gwiazdki
-        static void InGameIfCheck(string input) // wybieranie litery lub chęci zgadywania słowa przez gracza
+        static void InGameIfCheck() // wybieranie litery lub chęci zgadywania słowa przez gracza
         {
+            Console.WriteLine("Enter character or 'check' if you want to enter the whole word:");
             int x = 0;
-            if (input=="check")
-            {
-                Console.WriteLine("Enter the word:");
-                WordCheck(Console.ReadLine());
-
-            }
-            else
-            {
-                for (int i = 0; i < word.Length; i++)
+            string input = Console.ReadLine();
+            if (input == "check")
                 {
-                    if (input == word[i].ToString())
-                    {
-                        char.TryParse(input, out wordInvisible[i]);
-                        x++;
-                    }
-                }
-                if (x==0) Hangman(hangmanLife);
+                Console.WriteLine("Enter the word:");
+                    WordCheck(Console.ReadLine());
 
-            }
-            Console.WriteLine("Enter character:");
+                }
+            else
+                {
+                for (int i = 0; i < word.Length; i++)
+                    {
+                        if (input == word[i].ToString())
+                        {
+                            char.TryParse(input, out wordInvisible[i]);
+                            x++;
+                        }
+                    }
+                if (x == 0)
+                {
+                    Hangman(hangmanLife);
+                }
+                }
+            Console.WriteLine(wordInvisible);
+            checkWord();
+
         }
         static void WordCheck(string input) // zgadywanie całego słowa
         {
             if (input.ToLower()==wordString)
             {
-                score++;
-                Console.WriteLine("Congratulations, that is the correct word!");
-                Console.WriteLine("Your score is {0}", score);
+                Win();
             }
             else
             {
@@ -124,8 +129,8 @@ namespace Hangman
                         Console.WriteLine("|      |");
                         Console.WriteLine("|      @");
                         Console.WriteLine("|     /|\\ ");
-                        Console.WriteLine("|      |");
-                        Console.WriteLine("/|\\   /|\\ ");
+                        Console.WriteLine("|     / \\ ");
+                        Console.WriteLine("/|\\");
                         hangmanLife--;
                         break;
                     }
@@ -135,15 +140,65 @@ namespace Hangman
                         Console.WriteLine("|      |");
                         Console.WriteLine("|      X");
                         Console.WriteLine("|     /|\\ ");
-                        Console.WriteLine("|      |");
-                        Console.WriteLine("/|\\   /|\\ ");
+                        Console.WriteLine("|     / \\ ");
+                        Console.WriteLine("/|\\");
                         Console.WriteLine("@@ YOU LOSE @@");
                         hangmanLife--;
+                        Lose();
                         break;
                     }
                 default:
                     break;
             }
         } // wyświetlanie wisielca i odejmowanie szans do wygranej
+        static void Win() // info o wygranej i zwiększanie wyniku
+        {
+            score++;
+            Console.WriteLine("Congratulations, that is the correct word!");
+            Console.WriteLine("Your score is {0}", score);
+            cond = true;
+        }
+        static void Lose() // info i przegranej i zmniejszanie wyniku
+        {
+            score--;
+            Console.WriteLine("Your score is {0}", score);
+            cond = true;
+        }
+        static void checkWord()
+        {
+            if (wordString == new string(wordInvisible)) Win();
+        } // sprawdza, czy słowo zawiera się w podanych przez gracza literach
+
+        static bool MainMenu() // menu główne
+        {
+            Console.WriteLine("Welcome to the Hangman Game.");
+            Console.WriteLine("Choose your option");
+            Console.WriteLine("1) Play the game.");
+            Console.WriteLine("2) Exit.");
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    {
+                        Game();
+                        return true;
+                    }
+                case "2":
+                    {
+                        Environment.Exit(0);
+                        return true;
+                    }
+                default:
+                    return true;
+            }
+        }
+        static void Game() // rozgrywka
+        {
+            Console.WriteLine(wordInvisible);
+            while (hangmanLife > 0 && cond == false)
+            {
+                InGameIfCheck();
+            }
+        }
+
     }
 }
