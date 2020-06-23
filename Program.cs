@@ -10,23 +10,19 @@ namespace Hangman
             "something", "graduate", "cosmos", "pleasure", "elephant", "balls", "failure", "skateboarding", "cinema", "gargoyle", "kitchen",
             "crocodile", "pursue", "widow", "quantum", "venom", "robotic", "magician", "building", "quarry", "ethos", "terrific", "minion"
         };
-        static string wordString = DrawAWord(words).ToLower();
-        static char[] word = wordString.ToCharArray();
-        static char[] wordInvisible = InvisibilityWord(word).ToCharArray();
+        static string wordString;
+        static char[] word, wordInvisible;
         static int score = 0;
-        static int hangmanLife = 5;
+        static int hangmanLife;
         static bool cond = false;
-        static string input = String.Empty;
         static void Main(string[] args)
         {
-            do
+            while(true)
             {
                 MainMenu();
-            } while (true);
+            }
             
         }
-        
-
         static string DrawAWord(string[] a)
         {
             Random rnd = new Random();
@@ -54,6 +50,7 @@ namespace Hangman
                 }
             else
                 {
+                Console.Clear();
                 for (int i = 0; i < word.Length; i++)
                     {
                         if (input == word[i].ToString())
@@ -64,10 +61,12 @@ namespace Hangman
                     }
                 if (x == 0)
                 {
+                    Console.Clear();
+                    hangmanLife--;
                     Hangman(hangmanLife);
                 }
                 }
-            Console.WriteLine(wordInvisible);
+            
             checkWord();
 
         }
@@ -75,10 +74,12 @@ namespace Hangman
         {
             if (input.ToLower()==wordString)
             {
+                Console.Clear();
                 Win();
             }
             else
             {
+                hangmanLife--;
                 Hangman(hangmanLife);
             }
         }
@@ -86,6 +87,8 @@ namespace Hangman
         {
             switch (input)
             {
+                case 6:
+                    break;
                 case 5:
                     {
                         Console.WriteLine("--------");
@@ -94,7 +97,7 @@ namespace Hangman
                         Console.WriteLine("|");
                         Console.WriteLine("|");
                         Console.WriteLine("/|\\");
-                        hangmanLife--;
+                        
                         break;
                     }
                 case 4:
@@ -105,7 +108,6 @@ namespace Hangman
                         Console.WriteLine("|");
                         Console.WriteLine("|");
                         Console.WriteLine("/|\\");
-                        hangmanLife--;
                         break;
                     }
                 case 3:
@@ -116,7 +118,6 @@ namespace Hangman
                         Console.WriteLine("|     /|\\ ");
                         Console.WriteLine("|");
                         Console.WriteLine("/|\\");
-                        hangmanLife--;
                         break;
                     }
                 case 2:
@@ -127,7 +128,6 @@ namespace Hangman
                         Console.WriteLine("|     /|\\ ");
                         Console.WriteLine("|     / \\ ");
                         Console.WriteLine("/|\\");
-                        hangmanLife--;
                         break;
                     }
                 case 1:
@@ -139,7 +139,6 @@ namespace Hangman
                         Console.WriteLine("|     / \\ ");
                         Console.WriteLine("/|\\");
                         Console.WriteLine("@@ YOU LOSE @@");
-                        hangmanLife--;
                         Lose();
                         break;
                     }
@@ -149,22 +148,21 @@ namespace Hangman
         } // wyświetlanie wisielca i odejmowanie szans do wygranej
         static void Win() // info o wygranej i zwiększanie wyniku
         {
+            Console.Clear();
             score++;
-            Console.WriteLine("Congratulations, that is the correct word!");
-            Console.WriteLine("Your score is {0}", score);
+            Console.WriteLine("Congratulations, '{0}' is the correct word!", wordString);
+            Console.WriteLine("Your score is {0}.\n", score);
             cond = true;
         }
         static void Lose() // info i przegranej i zmniejszanie wyniku
         {
             score--;
-            Console.WriteLine("Your score is {0}", score);
-            cond = true;
+            Console.WriteLine("Your score is {0}.\n", score);
         }
         static void checkWord()
         {
             if (wordString == new string(wordInvisible)) Win();
         } // sprawdza, czy słowo zawiera się w podanych przez gracza literach
-
         static bool MainMenu() // menu główne
         {
             Console.WriteLine("Welcome to the Hangman Game.");
@@ -175,13 +173,14 @@ namespace Hangman
             {
                 case "1":
                     {
+                        Console.Clear();
                         Game();
                         return true;
                     }
                 case "2":
                     {
                         Environment.Exit(0);
-                        return true;
+                        return false;
                     }
                 default:
                     return true;
@@ -189,11 +188,18 @@ namespace Hangman
         }
         static void Game() // rozgrywka
         {
-            Console.WriteLine(wordInvisible);
-            while (hangmanLife > 0 && cond == false)
+            cond = false;
+            wordString = DrawAWord(words).ToLower();
+            word = wordString.ToCharArray();
+            wordInvisible = InvisibilityWord(word).ToCharArray();
+            hangmanLife = 6;
+            while (hangmanLife > 1 && cond == false)
             {
+                Console.Write("The word is: ");
+                Console.WriteLine(wordInvisible);
                 InGameIfCheck();
             }
+
         }
 
     }
