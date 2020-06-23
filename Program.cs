@@ -24,10 +24,6 @@ namespace Hangman
                 MainMenu();
             } while (true);
             
-
-            Console.WriteLine(wordInvisible);
-            Console.WriteLine(word);
-            
         }
         
 
